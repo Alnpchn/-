@@ -1,0 +1,36 @@
+#include<stdio.h>
+#include<math.h>
+#include<locale.h>
+typedef double (*TFun) (double);
+double Y(double);
+double V(double);
+void Out_Rez(TFun, double, double, double);
+void main()
+{
+	double a, b, h;
+	setlocale(LC_ALL, "RUS");
+	puts("Введите a, b, h: ");
+	scanf("%lf %lf %lf", &a, &b, &h);
+	puts("Функция V(x)=tg(x)-x*cos(3x)");
+	t_rez(V, a, b, h);
+}
+double Y(double x)
+{
+	return tan(x) - x * cos(3 * x);
+}
+double V(double x)
+{
+	double r;
+	if (x < 0)
+		r = (1 + x) / (1 + pow(x, 2));
+	if (0 <= x && x < 1)
+		r = sqrt(1 + x / (1 + x));
+	if (x >= 1)
+		r = 2 * fabs(sin(3 * x));
+	return r;
+}
+int t_rez(TFun f, double xn, double xk, double h)
+{
+	for (double x = xn; x <= xk; x += h)
+		printf("x=%5.2lf, y=%8.4lf\n", x, f(x));
+}
