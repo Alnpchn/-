@@ -1,0 +1,50 @@
+#include<stdio.h>
+#include<math.h>
+#include<locale.h>
+typedef double (*fun) (double);
+double Y (double);
+double V (double);
+void Rez(fun, double);
+
+double Y (double x)
+{
+	return tan(x) - x * cos(3*x);
+}
+double V (double x)
+{
+	double r;
+	if (x < 0)
+		r = (1 + x) / (1 + pow(x, 2));
+	if (0 <= x && x < 1)
+		r = sqrt(1 + x / (1 + x));
+	if (x >= 1)
+		r = 2 * fabs(sin(3 * x));
+	return r;
+}
+void Rez(fun y, double x)
+{
+	printf("%lf\n", y(x));
+}
+void main()
+{
+	double x;
+	int d;
+	setlocale(LC_ALL, "RUS");
+	puts("Выберите действие:\n1-Вывести значение функции Y(x)\n2-Вывести значение функции V(x)\n");
+	scanf("%d", &d);
+	switch (d)
+	{
+	case 1:
+		puts("Введите x: ");
+		scanf("%lf", &x);
+		printf("Значение функции Y(x) при x=%lf: ", x);
+		Rez(Y, x);
+		break;
+	case 2:
+		puts("Введите x: ");
+		scanf("%lf", &x);
+		printf("Значение функции V(x) при x=%lf: ", x);
+		Rez(V, x);
+		break;
+	}
+}
