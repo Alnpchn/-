@@ -1,0 +1,183 @@
+#include<stdio.h> 
+#include<math.h> 
+#include<locale.h> 
+typedef double(*fun) (double);
+double Y(double);
+double V(double);
+void Rez(fun, double, double, double);
+void plot(double x0, double x1, fun f)
+
+{
+
+	int SCREENW = 60, SCREENH = 40;//размеры поля вывода в символах 
+
+	char screen[60][40];
+
+	double x, y[60];
+
+	double ymin = 0, ymax = 0;
+
+	double hx, hy;
+
+	int i, j;
+
+	int xz, yz;
+
+	hx = (x1 - x0) / (SCREENW - 1);
+
+	for (i = 0, x = x0; i < SCREENW; ++i, x += hx) {
+
+		y[i] = f(x); //расчет значений функции для каждой точки поля вывода графика 
+
+		if (y[i] < ymin) ymin = y[i];
+
+		if (y[i] > ymax) ymax = y[i];
+
+	}
+
+	hy = (ymax - ymin) / (SCREENH - 1);
+
+	yz = (int)floor(ymax / hy + 0.5);
+
+	xz = (int)floor((0. - x0) / hx + 0.5);
+
+	//построение осей и заполнение массива отображения пробелами 
+
+	for (j = 0; j < SCREENH; ++j)
+
+		for (i = 0; i < SCREENW; ++i) {
+
+			if (j == yz && i == xz) screen[i][j] = '+';
+
+			else if (j == yz) screen[i][j] = '-';
+
+			else if (i == xz) screen[i][j] = '|';
+
+			else screen[i][j] = ' ';
+
+		}
+
+	//определение положения значения функции на поле вывода 
+
+	for (i = 0; i < SCREENW; ++i) {
+
+		j = (int)floor((ymax - y[i]) / hy + 0.5);
+
+		screen[i][j] = '*';
+
+	}
+
+	//печать массива символов 
+
+	for (j = 0; j < SCREENH; ++j) {
+
+		for (i = 0; i < SCREENW; ++i) putchar(screen[i][j]);
+
+		putchar('\n');
+
+	}
+
+}
+int main()
+{
+	double a, b, h;
+	double x, x0, x1;
+	int r;
+	setlocale(LC_ALL, "RUS");
+	printf("Выберите действие : \n1 - Вывести значение функции\n2 - Вывести значение функции на интервале\n3- Построить график функции\n");
+	scanf("%d", &r);
+	switch (r)
+	{
+	case 1:
+		printf("Введите x:\n");
+		scanf("%lf", &x);
+		printf("1 - Вывести значение функции Y\n");
+		printf("2 - Вывести значение функции V\n");
+		scanf("%d", &r);
+		switch (r)
+		{
+		case 1:
+			printf("\n\t Функция Y\n");
+			printf("%lf", Y(x));
+			break;
+		case 2:
+			printf("\n\t Функция V\n");
+			printf("%lf", V(x));
+			break;
+		default: break;
+		}
+		break;
+	case 2:
+		printf("Введите a, b, h\n");
+		scanf("%lf %lf %lf", &a, &b, &h);
+		printf("1 - Посчитать функцию Y\n");
+		printf("2 - Посчитать функцию V\n");
+		scanf("%d", &r);
+		switch (r)
+		{
+		case 1:
+			printf("\n\t Функция Y\n");
+			Rez(Y, a, b, h);
+			break;
+		case 2:
+			printf("\n\t Функция V\n");
+			Rez(V, a, b, h);
+			break;
+		default: break;
+		}
+		break;
+	case 3:
+		printf("1 - Вывести график функции Y\n");
+		printf("2 - Вывести график функции V\n");
+		scanf("%d", &r);
+		switch (r)
+		{
+		case 1:
+			printf("\n\t График функции Y\n");
+			printf("Введите x0:\n");
+			scanf("%lf", &x0);
+			printf("Введите x1:\n");
+			scanf("%lf", &x1);
+			plot(x0, x1, Y);
+			break;
+		case 2:
+
+			printf("\n\t График функции V\n");
+			printf("Введите x0:\n");
+			scanf("%lf", &x0);
+			printf("Введите x1:\n");
+			scanf("%lf", &x1);
+			plot(x0, x1, V);
+			break;
+		default: break;
+		}
+		break;
+	}
+	return 0;
+}
+
+double Y(double x)
+{
+	double y;
+	if (x != -2 && x != -0,18)
+		y = tan(x) - x * cos(3 * x);
+	else
+		printf("Не удовлетворяет ОДЗ");
+	return y;
+}
+double V(double x)
+{
+	double y;
+	if (x < 0)
+		y = (1 + x) / (1 + pow(x, 2));
+	if (0 <= x && x < 1)
+		y = sqrt(1 + x / (1 + x));
+	if (x >= 1)
+		y = 2 * fabs(sin(3 * x));
+	return y;
+}
+void Rez(fun f, double xn, double xk, double h)
+{
+	for (double x = xn; x <= xk; x += h)
+		printf("x=%5.2lf, y=%8.4lf\n", x, f(x));
+}
