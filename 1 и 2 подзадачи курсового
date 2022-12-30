@@ -1,0 +1,261 @@
+#include<stdio.h> 
+#include<math.h> 
+#include<locale.h> 
+#include <stdlib.h>
+typedef double(*fun) (double);
+double Y(double);
+double V(double);
+float s_1(char);
+float s_2(char);
+void Rez(fun, double);
+void function4(int);
+#define XMIN -100
+#define XMAX 100
+double full_elements(int*arr, int size)
+{
+	srand(time(NULL));
+	int i;
+	for (i = 0; i < size; i++)
+	{
+		arr[i] = XMIN + 1.f * (XMAX - XMIN) * rand() / RAND_MAX;
+	}
+	return arr[i];
+}
+int put_elements(double* arr, int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		printf("arr[%d]=%d\n", i + 1, arr[i]);
+	}
+	return 0;
+}
+double Y(double x)
+{
+	double y;
+	if (x != -2 && x != -0, 18)
+		y = tan(x) - x * cos(3 * x);
+	else
+		printf("Не удовлетворяет ОДЗ");
+	return y;
+}
+double V(double x)
+{
+	double y;
+	if (x < 0)
+		y = (1 + x) / (1 + pow(x, 2));
+	if (0 <= x && x < 1)
+		y = sqrt(1 + x / (1 + x));
+	if (x >= 1)
+		y = 2 * fabs(sin(3 * x));
+	return y;
+}
+float s_1(char* s1)
+{
+	if (s1 == '(') return 1;
+	if (s1 == '[') return 0;
+}
+float s_2(char* s2)
+{
+	if (s2 == ')') return 1;
+	if (s2 == ']') return 0;
+}
+void plot(double x0, double x1, fun f)
+{
+	int SCREENW = 60, SCREENH = 40;//размеры поля вывода в символах 
+	char screen[60][40];
+	double x, y[60];
+	double ymin = 0, ymax = 0;
+	double hx, hy;
+	int i, j;
+	int xz, yz;
+	hx = (x1 - x0) / (SCREENW - 1);
+	for (i = 0, x = x0; i < SCREENW; ++i, x += hx)
+	{
+		y[i] = f(x); //расчет значений функции для каждой точки поля вывода графика 
+		if (y[i] < ymin) ymin = y[i];
+		if (y[i] > ymax) ymax = y[i];
+	}
+	hy = (ymax - ymin) / (SCREENH - 1);
+	yz = (int)floor(ymax / hy + 0.5);
+	xz = (int)floor((0. - x0) / hx + 0.5);
+	//построение осей и заполнение массива отображения пробелами 
+	for (j = 0; j < SCREENH; ++j)
+		for (i = 0; i < SCREENW; ++i) {
+			if (j == yz && i == xz) screen[i][j] = '+';
+			else if (j == yz) screen[i][j] = '-';
+			else if (i == xz) screen[i][j] = '|';
+			else screen[i][j] = ' ';
+		}
+	//определение положения значения функции на поле вывода 
+	for (i = 0; i < SCREENW; ++i) {
+		j = (int)floor((ymax - y[i]) / hy + 0.5);
+		screen[i][j] = '*';
+	}
+	//печать массива символов 
+	for (j = 0; j < SCREENH; ++j) {
+		for (i = 0; i < SCREENW; ++i)
+			putchar(screen[i][j]);
+		putchar('\n');
+	}
+}
+void Rez(fun f, double xn, double xk, double h)
+{
+	for (double x = xn; x <= xk; x += h)
+		printf("x=%5.2lf, %8.4lf\n", x, f(x));
+}
+void function4(int* arr, int a, int b, int size)
+
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (abs(arr[i]) > a && abs(arr[i]) < b)
+		{
+			for (int j = i; j < size; j++)
+			{
+				arr[j] = arr[j + 1];
+			}
+			arr[size - 1] = 1;
+			i--;
+		}
+	}
+
+	for (int i = 0; i < size; i++) {
+		printf("arr[%d]=%d\n", i+1, arr[i]);
+	}
+}
+void main()
+{
+	double n, h;
+	double x, x0, x1, x2, x3;
+	int i, r;
+	char s1, s2;
+	int a, b;
+	const int size = 10;
+	int arr[10];
+	setlocale(LC_ALL, "RUS");
+	puts(" * * * * * * * * * * * * * * * * * * * * * * * ");
+	puts("*         Выполнила: Печенина Алина            *");
+	puts("*              Группа БИСТ-225                 *");
+	puts("*                 Функции:                     *");
+	puts("*                                              *");
+	puts("* Y(x)=tg(x)-x*cos(3x)        ОДЗ: x!=-2, 0,18 *");
+	puts("*        _                                     *");
+	puts("*       |    1+x                               *");
+	puts("*       |   -------      ,    если x<0         *");
+	puts("*       |    1+x^2                             *");
+	puts("*       |     ________                         *");
+	puts("* V(x)=<     /     x                           *");
+	puts("*       |  |/1 + -----   ,    если 0 <= x<1    *");
+	puts("*       |         1+x                          *");
+	puts("*       |                                      *");
+	puts("*       |   2|sin3x|     ,    если x>=1        *");
+	puts("*        -                                     *");
+	puts(" * * * * * * * * * * * * * * * * * * * * * * *  ");
+	while (1)
+	{
+		printf("Выберите действие : \n1 - Посчитать функцию при заданном значении х\n2 - Протабулировать функцию с шагом h\n3 - Построить график функции\n4 - Работа с массивом\n");
+		scanf("%d", &r);
+
+		switch (r)
+		{
+		case 1:
+			printf("Введите x:\n");
+			scanf("%lf", &x);
+			printf("1 - Посчитать функцию Y при заданном значении х\n");
+			printf("2 - Посчитать функцию V при заданном значении х\n");
+			scanf("%d", &r);
+			switch (r)
+			{
+			case 1:
+				printf("Значение функции Y равно:\n");
+				printf("%lf", Y(x));
+				break;
+			case 2:
+				printf("Значение функции V равно:\n");
+				printf("%lf", V(x));
+				break;
+			default: break;
+			}
+			break;
+		case 2:
+			printf("Введите интервал (через пробел):\n");
+			scanf("%c", &s1);
+			scanf("%c", &s1);
+			scanf("%lf%lf", &x2, &x3);
+			scanf("%c", &s2);
+			scanf("%c", &s2);
+			printf("Введите шаг:\n");
+			scanf("%lf", &h);
+			printf("1 - Протабулировать функцию Y с шагом h\n");
+			printf("2 - Протабулировать функцию V с шагом h\n");
+			scanf("%d", &r);
+			switch (r)
+			{
+			case 1:
+				printf("Функция Y\n");
+				x2 += s_1(s1);
+				x3 += s_2(s2);
+				puts(" _________________________________");
+				puts("|      x        |        y        |");
+				puts("|_________________________________|");
+				for (x = x2; x < x3; x += h)
+				{
+					n = Y(x);
+					printf("|%15lf |%15lf |\n", x, n);
+					puts("|_________________________________|");
+				}
+				break;
+			case 2:
+				printf("Функция V\n");
+				x2 += s_1(s1);
+				x3 += s_2(s2);
+				puts(" _________________________________");
+				puts("|      x        |        y        |");
+				puts("|_________________________________|");
+				for (x = x2; x < x3; x += h)
+				{
+					n = V(x);
+					printf("|%15lf |%15lf |\n", x, n);
+					puts("|_________________________________|");
+				}
+				break;
+			}
+			break;
+		case 3:
+			printf("Введите x0:\n");
+			scanf("%lf", &x0);
+			printf("Введите x1:\n");
+			scanf("%lf", &x1);
+			printf("1 - Построить график функции Y\n");
+			printf("2 - Построить график функции V\n");
+			scanf("%d", &r);
+			switch (r)
+			{
+			case 1:
+				printf("График функции Y\n");
+				plot(x0, x1, Y);
+				break;
+			case 2:
+
+				printf("График функции V\n");
+				plot(x0, x1, V);
+				break;
+			}
+			break;
+		case 4:
+			full_elements(arr, size);
+			put_elements(arr, size);
+			printf("Введите нижнюю границу : \n");
+			scanf("%d", &a);
+			printf("Введите верхнюю границу : \n");
+			scanf("%d", &b);
+			function4(arr, a, b, size);
+			break;
+		default: break;
+
+		}
+		printf("\nПродолжить? Да-1, нет-0\n");
+		scanf("%d", &i);
+		if (i == 0) break;
+	}
+}
